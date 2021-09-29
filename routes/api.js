@@ -1,5 +1,14 @@
 const router = require('express').Router();
 const Workout = require('../models/workout');
+const path = require('path');
+
+router.get('/exercise', (req, res) => {
+    res.sendFile(path.join(__dirname,'../public/exercise.html'))
+})
+
+router.get('/stats', (req, res) => {
+    res.sendFile(path.join(__dirname,'../public/stats.html'))
+})
 
 router.get('/api/workouts', async (req, res) => {
     try {
@@ -48,7 +57,7 @@ router.get('/api/workouts/range', async (req, res) => {
         let allWorkouts = await Workout.aggregate([{
             $addFields: {
                 totalDuration: {
-                    $sum: "$exercise.duration"
+                    $sum: "$exercises.duration"
                 }
             }
         }]).sort({
@@ -59,3 +68,5 @@ router.get('/api/workouts/range', async (req, res) => {
         res.status(500).json(err.message)
     }
 })
+
+module.exports = router;
